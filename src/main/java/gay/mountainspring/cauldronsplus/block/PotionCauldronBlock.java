@@ -47,9 +47,10 @@ public class PotionCauldronBlock extends TwentyFourLevelCauldronBlock implements
 	
 	@Override
 	protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-		if (!world.isClient && this.isEntityTouchingFluid(state, pos, entity) && entity instanceof LivingEntity livingEntity) {
-			PotionContentsComponent potionContents = world.getBlockEntity(pos, CauldronBlockEntityTypes.POTION_CAULDRON).get().getPotion();
-			
+		if (!world.isClient && state.get(LEVEL) >= 8 && this.isEntityTouchingFluid(state, pos, entity) && entity instanceof LivingEntity livingEntity && world.getBlockEntity(pos) instanceof PotionCauldronBlockEntity potionCauldronBlockEntity) {
+			if (potionCauldronBlockEntity.applyEffectsToEntity(livingEntity, world)) {
+				this.decrementFluidLevelBy8(state, world, pos);
+			}
 		}
 	}
 	

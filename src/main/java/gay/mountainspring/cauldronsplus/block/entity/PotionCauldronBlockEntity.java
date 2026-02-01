@@ -2,10 +2,13 @@ package gay.mountainspring.cauldronsplus.block.entity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
 import gay.mountainspring.cauldronsplus.Cauldrons;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap.Builder;
@@ -16,15 +19,19 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class PotionCauldronBlockEntity extends BlockEntity {
 	private PotionContentsComponent potion = PotionContentsComponent.DEFAULT;
+	private Object2LongMap<UUID> recentlyAffectedEntities = new Object2LongOpenHashMap<>();
 	
 	public PotionCauldronBlockEntity(BlockPos pos, BlockState state) {
 		super(CauldronBlockEntityTypes.POTION_CAULDRON, pos, state);
@@ -42,6 +49,15 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 	protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
 		super.writeNbt(nbt, registryLookup);
 		nbt.put("potion", PotionContentsComponent.CODEC.encodeStart(NbtOps.INSTANCE, potion).getOrThrow());
+		NbtList nbtList = new NbtList();
+		
+		for (Object2LongMap.Entry<UUID> entry : this.recentlyAffectedEntities.object2LongEntrySet()) {
+			NbtCompound nbtCompound = new NbtCompound();
+			nbtCompound.putUuid("Entity", entry.getKey());
+			nbtCompound.putLong("Time", entry.getLongValue());
+		}
+		
+		nbt.put("RecentEntities", nbtList);
 	}
 	
 	@Override
@@ -52,6 +68,22 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 			.parse(NbtOps.INSTANCE, nbt.get("potion"))
 			.resultOrPartial(string -> Cauldrons.LOGGER.error("Failed to parse potion: '{}'", string))
 			.ifPresent(pot -> this.potion = pot);
+		}
+		if (nbt.contains("RecentEntities") && nbt.get("RecentEntities") instanceof NbtList nbtList) {
+			this.recentlyAffectedEntities.clear();
+			for (NbtElement nbtElement : nbtList) {
+				if (nbtElement instanceof NbtCompound nbtCompound) {
+					if (nbtCompound.contains("Entity") && nbtCompound.contains("Time")) {
+						try {
+							UUID uuid = nbtCompound.getUuid("Entity");
+							long time = nbtCompound.getLong("Time");
+							this.recentlyAffectedEntities.put(uuid, time);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 	}
 	
@@ -93,7 +125,7 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 		return newStack;
 	}
 	
-	public boolean applyEffectsToEntity(LivingEntity entity) {
+	public boolean applyEffectsToEntity(LivingEntity entity, World world) {
 		List<StatusEffectInstance> effects = Lists.newArrayList();
 		if (this.potion.potion().isPresent()) {
 			for (StatusEffectInstance effect : this.potion.potion().get().value().getEffects()) {
@@ -102,17 +134,20 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 		}
 		effects.addAll(this.potion.customEffects());
 		boolean hasEffectedEntity = false;
-		if (entity.isAffectedBySplashPotions()) {
+		if (!effects.isEmpty() && entity.isAffectedBySplashPotions() && this.recentlyAffectedEntities.containsKey(entity.getUuid())) {
 			for (StatusEffectInstance effect : effects) {
 				if (entity.canHaveStatusEffect(effect)) {
 					if (effect.getEffectType().value().isInstant()) {
 						effect.getEffectType().value().applyInstantEffect(null, null, entity, effect.getAmplifier(), 1.0f);
-						hasEffectedEntity = true;
 					} else {
 						entity.addStatusEffect(effect);
 					}
+					hasEffectedEntity = true;
 				}
 			}
+		}
+		if (hasEffectedEntity) {
+			this.recentlyAffectedEntities.put(entity.getUuid(), world.getTime() + 400L);
 		}
 		return hasEffectedEntity;
 	}
