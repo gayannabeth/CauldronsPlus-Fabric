@@ -11,7 +11,8 @@
 	],
 	"contact": {
 		"email": "mountainspring379@gmail.com",
-		"discord": "https://discord.gg/8KZvZHq"
+		"discord": "https://discord.gg/8KZvZHq",
+		"sources": "https://github.com/gayannabeth/CauldronsPlus-Fabric"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/cauldronsplus/icon.png",
