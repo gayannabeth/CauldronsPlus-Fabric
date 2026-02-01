@@ -1,0 +1,45 @@
+{
+	"schemaVersion": 1,
+	"id": "cauldronsplus",
+	"version": "${version}",
+	"name": "Cauldrons+",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"gayannabeth",
+		"Montanoceratops",
+		"Ashley"
+	],
+	"contact": {
+		"email": "mountainspring379@gmail.com",
+		"discord": "https://discord.gg/8KZvZHq"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/cauldronsplus/icon.png",
+	"environment": "*",
+	"accessWidener" : "cauldronsplus.classtweaker",
+	"entrypoints": {
+		"main": [
+			"gay.mountainspring.cauldronsplus.Cauldrons"
+		],
+		"client": [
+			"gay.mountainspring.cauldronsplus.client.CauldronsClient"
+		],
+		"fabric-datagen": [
+			"gay.mountainspring.cauldronsplus.datagen.CauldronsDataGen"
+		]
+	},
+	"mixins": [
+		"cauldronsplus.mixins.json",
+		{
+			"config": "cauldronsplus.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"		,
+		"aquifer": "*"
+	}
+}

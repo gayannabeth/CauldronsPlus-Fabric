@@ -1,0 +1,3 @@
+classTweaker v1 named
+transitive-inject-interface net/minecraft/block/HoneyBlock gay/mountainspring/aquifer/block/InjectableFluidDrainable
+transitive-inject-interface net/minecraft/block/SlimeBlock gay/mountainspring/aquifer/block/InjectableFluidDrainable

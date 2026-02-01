@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "cauldronsplus:slime_bucket"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:slime_block"
+  }
+}

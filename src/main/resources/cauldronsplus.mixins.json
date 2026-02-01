@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"package": "gay.mountainspring.cauldronsplus.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"HoneyBlockMixin",
+		"MilkBucketItemMixin",
+		"SlimeBlockMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
