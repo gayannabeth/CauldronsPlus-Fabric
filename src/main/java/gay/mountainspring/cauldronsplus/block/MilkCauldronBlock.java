@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import gay.mountainspring.aquifer.block.cauldron.CauldronContentsType;
 import gay.mountainspring.aquifer.block.cauldron.CauldronGroup;
+import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusBehavior;
 import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusContentsTypes;
 
 public class MilkCauldronBlock extends FourLeveledCauldronBlock {
@@ -15,7 +16,7 @@ public class MilkCauldronBlock extends FourLeveledCauldronBlock {
 	}
 	
 	public MilkCauldronBlock(CauldronGroup group, Settings settings) {
-		super(group, settings, null); //TODO behavior map
+		super(group, settings, CauldronsPlusBehavior.MILK_CAULDRON_BEHAVIOR);
 	}
 	
 	@Override

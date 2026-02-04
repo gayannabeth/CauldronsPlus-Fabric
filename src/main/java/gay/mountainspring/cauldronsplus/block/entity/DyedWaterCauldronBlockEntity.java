@@ -1,5 +1,6 @@
 package gay.mountainspring.cauldronsplus.block.entity;
 
+import gay.mountainspring.aquifer.util.ColorSupplier;
 import gay.mountainspring.cauldronsplus.util.ColorMixingUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -16,7 +17,7 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
-public class DyedWaterCauldronBlockEntity extends BlockEntity {
+public class DyedWaterCauldronBlockEntity extends BlockEntity implements ColorSupplier {
 	private DyedColorComponent color = new DyedColorComponent(0xffffff, true);
 	
 	public DyedWaterCauldronBlockEntity(BlockPos pos, BlockState state) {
@@ -31,6 +32,7 @@ public class DyedWaterCauldronBlockEntity extends BlockEntity {
 		this.color = newColor;
 	}
 	
+	@Override
 	public int getColor() {
 		return this.color.rgb();
 	}

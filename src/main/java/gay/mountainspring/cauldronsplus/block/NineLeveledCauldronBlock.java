@@ -17,6 +17,7 @@ public abstract class NineLeveledCauldronBlock extends AbstractAquiferCauldronBl
 	
 	public NineLeveledCauldronBlock(CauldronGroup group, Settings settings, CauldronBehaviorMap behaviorMap) {
 		super(group, settings, behaviorMap);
+		this.setDefaultState(this.stateManager.getDefaultState().with(LEVEL, 1));
 	}
 	
 	@Override

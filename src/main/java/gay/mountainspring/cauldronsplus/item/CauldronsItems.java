@@ -22,7 +22,17 @@ import net.minecraft.world.World;
 public class CauldronsItems {
 	private CauldronsItems() {}
 	
-	public static void init() {
+	public static void init() {}
+	
+	public static final Item HONEY_BUCKET = register("honey_bucket", new HoneyBucketItem(Blocks.HONEY_BLOCK, SoundEvents.BLOCK_HONEY_BLOCK_PLACE, new Item.Settings().maxCount(1).recipeRemainder(Items.BUCKET).food(CauldronsFoodComponents.HONEY_BUCKET)));
+	public static final Item MILK_BOTTLE = register("milk_bottle", new MilkBottleItem(new Item.Settings().maxCount(16).recipeRemainder(Items.GLASS_BOTTLE).food(CauldronsFoodComponents.MILK_BOTTLE)));
+	public static final Item SLIME_BUCKET = register("slime_bucket", new PowderSnowBucketItem(Blocks.SLIME_BLOCK, SoundEvents.BLOCK_SLIME_BLOCK_PLACE, new Item.Settings().maxCount(1).recipeRemainder(Items.BUCKET)));
+	
+	public static Item register(String name, Item item) {
+		return Registry.register(Registries.ITEM, Identifier.of(Cauldrons.MOD_ID, name), item);
+	}
+	
+	static {
 		DispenserBehavior bucketPlaceBehavior = new ItemDispenserBehavior() {
 			private final ItemDispenserBehavior fallbackBehavior = new ItemDispenserBehavior();
 
@@ -44,13 +54,5 @@ public class CauldronsItems {
 		DispenserBlock.registerBehavior(SLIME_BUCKET, bucketPlaceBehavior);
 		
 		ItemUtil.setItemFoodComponent(Items.MILK_BUCKET, CauldronsFoodComponents.MILK_BUCKET);
-	}
-	
-	public static final Item HONEY_BUCKET = register("honey_bucket", new HoneyBucketItem(Blocks.HONEY_BLOCK, SoundEvents.BLOCK_HONEY_BLOCK_PLACE, new Item.Settings().maxCount(1).recipeRemainder(Items.BUCKET).food(CauldronsFoodComponents.HONEY_BUCKET)));
-	public static final Item MILK_BOTTLE = register("milk_bottle", new MilkBottleItem(new Item.Settings().maxCount(16).recipeRemainder(Items.GLASS_BOTTLE).food(CauldronsFoodComponents.MILK_BOTTLE)));
-	public static final Item SLIME_BUCKET = register("slime_bucket", new PowderSnowBucketItem(Blocks.SLIME_BLOCK, SoundEvents.BLOCK_SLIME_BLOCK_PLACE, new Item.Settings().maxCount(1).recipeRemainder(Items.BUCKET)));
-	
-	public static Item register(String name, Item item) {
-		return Registry.register(Registries.ITEM, Identifier.of(Cauldrons.MOD_ID, name), item);
 	}
 }

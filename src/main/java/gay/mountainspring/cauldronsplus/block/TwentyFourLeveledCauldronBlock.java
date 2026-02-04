@@ -4,17 +4,19 @@ import gay.mountainspring.aquifer.block.AbstractAquiferCauldronBlock;
 import gay.mountainspring.aquifer.block.AquiferLeveledCauldronExtensions;
 import gay.mountainspring.aquifer.block.cauldron.CauldronGroup;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.cauldron.CauldronBehavior;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-public abstract class TwentyFourLevelCauldronBlock extends AbstractAquiferCauldronBlock implements AquiferLeveledCauldronExtensions {
+public abstract class TwentyFourLeveledCauldronBlock extends AbstractAquiferCauldronBlock implements AquiferLeveledCauldronExtensions {
 	public static final IntProperty LEVEL = CauldronsBlocks.LEVEL_24;
 	
-	public TwentyFourLevelCauldronBlock(CauldronGroup group, Settings settings) {
-		super(group, settings, null); //TODO: behavior map
+	public TwentyFourLeveledCauldronBlock(CauldronGroup group, Settings settings, CauldronBehavior.CauldronBehaviorMap behaviorMap) {
+		super(group, settings, behaviorMap);
+		this.setDefaultState(this.stateManager.getDefaultState().with(LEVEL, 8));
 	}
 
 	@Override

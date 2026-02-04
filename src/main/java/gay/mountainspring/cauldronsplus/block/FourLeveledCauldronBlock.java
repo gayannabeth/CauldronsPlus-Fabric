@@ -17,6 +17,7 @@ public abstract class FourLeveledCauldronBlock extends AbstractAquiferCauldronBl
 	
 	public FourLeveledCauldronBlock(CauldronGroup group, Settings settings, CauldronBehaviorMap behaviorMap) {
 		super(group, settings, behaviorMap);
+		this.setDefaultState(this.stateManager.getDefaultState().with(LEVEL, 1));
 	}
 	
 	@Override

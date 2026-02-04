@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import gay.mountainspring.aquifer.block.AquiferLeveledCauldronBlock;
 import gay.mountainspring.aquifer.block.cauldron.CauldronContentsType;
 import gay.mountainspring.aquifer.block.cauldron.CauldronGroup;
+import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusBehavior;
 import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusContentsTypes;
 import gay.mountainspring.cauldronsplus.block.entity.CauldronBlockEntityTypes;
 import gay.mountainspring.cauldronsplus.block.entity.DyedWaterCauldronBlockEntity;
@@ -27,7 +28,7 @@ public class DyedWaterCauldronBlock extends AquiferLeveledCauldronBlock implemen
 	}
 	
 	public DyedWaterCauldronBlock(CauldronGroup group, Settings settings) {
-		super(Biome.Precipitation.RAIN, group, settings, null); //TODO behavior map
+		super(Biome.Precipitation.RAIN, group, settings, CauldronsPlusBehavior.DYED_WATER_CAULDRON_BEHAVIOR);
 	}
 	
 	@Override

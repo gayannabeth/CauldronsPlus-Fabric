@@ -2,10 +2,13 @@ package gay.mountainspring.cauldronsplus.block.entity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
+import gay.mountainspring.aquifer.util.ColorSupplier;
 import gay.mountainspring.cauldronsplus.Cauldrons;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -29,7 +32,7 @@ import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class PotionCauldronBlockEntity extends BlockEntity {
+public class PotionCauldronBlockEntity extends BlockEntity implements ColorSupplier {
 	private PotionContentsComponent potion = PotionContentsComponent.DEFAULT;
 	private Object2LongMap<UUID> recentlyAffectedEntities = new Object2LongOpenHashMap<>();
 	
@@ -43,6 +46,11 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 	
 	public PotionContentsComponent getPotion() {
 		return this.potion;
+	}
+	
+	@Override
+	public int getColor() {
+		return this.potion.getColor();
 	}
 	
 	@Override
@@ -109,10 +117,6 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 		return this.createNbt(registryLookup);
 	}
 	
-	public Optional<Integer> getColor() {
-		return this.potion.customColor();
-	}
-	
 	public ItemStack fillPotion(ItemStack stack) {
 		ItemStack newStack = stack.copy();
 		if (stack.isOf(Items.GLASS_BOTTLE)) {
@@ -121,7 +125,7 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 		if (stack.isOf(Items.ARROW)) {
 			newStack = newStack.withItem(Items.TIPPED_ARROW);
 		}
-		newStack.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(this.potion.potion(), this.getColor(), this.potion.customEffects()));
+		newStack.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(this.potion.potion(), Optional.of(this.getColor()), this.potion.customEffects()));
 		return newStack;
 	}
 	
@@ -150,5 +154,23 @@ public class PotionCauldronBlockEntity extends BlockEntity {
 			this.recentlyAffectedEntities.put(entity.getUuid(), world.getTime() + 400L);
 		}
 		return hasEffectedEntity;
+	}
+	
+	public static void tick(World world, BlockPos pos, BlockState state, PotionCauldronBlockEntity blockEntity) {
+		if (!world.isClient) {
+			if (blockEntity.potion.hasEffects()) {
+				Set<UUID> toRemove = Sets.newHashSet();
+				for (Object2LongMap.Entry<UUID> entry : blockEntity.recentlyAffectedEntities.object2LongEntrySet()) {
+					if (entry.getLongValue() >= world.getTime()) {
+						toRemove.add(entry.getKey());
+					}
+				}
+				for (UUID uuid : toRemove) {
+					blockEntity.recentlyAffectedEntities.removeLong(uuid);
+				}
+			} else {
+				blockEntity.recentlyAffectedEntities.clear();
+			}
+		}
 	}
 }
