@@ -1,0 +1,10 @@
+{
+  "parent": "cauldronsplus:block/template_cauldron24_level22",
+  "textures": {
+    "bottom": "minecraft:block/cauldron_bottom",
+    "content": "minecraft:block/water_still",
+    "inside": "minecraft:block/cauldron_inner",
+    "side": "minecraft:block/cauldron_side",
+    "top": "minecraft:block/cauldron_top"
+  }
+}

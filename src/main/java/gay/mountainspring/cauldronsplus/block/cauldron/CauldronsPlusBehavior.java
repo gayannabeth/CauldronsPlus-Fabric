@@ -19,6 +19,7 @@ import gay.mountainspring.cauldronsplus.block.entity.PotionCauldronBlockEntity;
 import gay.mountainspring.cauldronsplus.item.CauldronsItems;
 import gay.mountainspring.cauldronsplus.stat.CauldronsPlusStats;
 import net.minecraft.block.AbstractCauldronBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.cauldron.CauldronBehavior;
 import net.minecraft.component.DataComponentTypes;
@@ -75,7 +76,7 @@ public class CauldronsPlusBehavior {
 		if (state.getBlock() instanceof AbstractCauldronBlock cauldron && cauldron.aquifer$getContentsType() == CauldronContentsType.EMPTY) {
 			if (!world.isClient) {
 				Item item = stack.getItem();
-				stack.decrement(1);
+				stack.decrementUnlessCreative(1, player);
 				player.incrementStat(Stats.FILL_CAULDRON);
 				player.incrementStat(Stats.USED.getOrCreateStat(item));
 				world.setBlockState(pos, cauldron.aquifer$getGroup().get(CauldronsPlusContentsTypes.SLIME).getDefaultState());
@@ -98,7 +99,7 @@ public class CauldronsPlusBehavior {
 			if (!world.isClient) {
 				Item item = stack.getItem();
 				if (cauldron.aquifer$incrementFluidLevel(state, world, pos)) {
-					stack.decrement(1);
+					stack.decrementUnlessCreative(1, player);
 					player.incrementStat(Stats.FILL_CAULDRON);
 					player.incrementStat(Stats.USED.getOrCreateStat(item));
 					world.playSound(null, pos, SoundEvents.BLOCK_SLIME_BLOCK_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -124,6 +125,7 @@ public class CauldronsPlusBehavior {
 					return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 				} else {
 					player.incrementStat(Stats.USED.getOrCreateStat(dye));
+					stack.decrementUnlessCreative(1, player);
 				}
 			} else {
 				return ItemActionResult.success(world.isClient);
@@ -166,11 +168,14 @@ public class CauldronsPlusBehavior {
 					player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
 					player.incrementStat(Stats.FILL_CAULDRON);
 					player.incrementStat(Stats.USED.getOrCreateStat(item));
-					world.setBlockState(pos, cauldron.aquifer$getGroup().get(CauldronsPlusContentsTypes.POTION).getDefaultState());
+					BlockState blockState;
+					world.setBlockState(pos, blockState = cauldron.aquifer$getGroup().get(CauldronsPlusContentsTypes.POTION).getDefaultState());
 					world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 1.0f, 1.0f);
 					world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
 					if (world.getBlockEntity(pos) instanceof PotionCauldronBlockEntity entity) {
 						entity.setPotion(potionContents);
+						entity.markDirty();
+						world.updateListeners(pos, blockState, blockState, Block.REDRAW_ON_MAIN_THREAD);
 					}
 				}
 				
@@ -276,7 +281,7 @@ public class CauldronsPlusBehavior {
 		if (state.getBlock() instanceof AbstractCauldronBlock cauldron) {
 			if (!world.isClient) {
 				Item item = stack.getItem();
-				stack.decrement(1);
+				stack.decrementUnlessCreative(1, player);
 				player.incrementStat(Stats.FILL_CAULDRON);
 				player.incrementStat(Stats.USED.getOrCreateStat(item));
 				world.setBlockState(pos, cauldron.aquifer$getGroup().get(resultType).getDefaultState().with(levelProperty, maxLevel));

@@ -1,26 +1,27 @@
 package gay.mountainspring.cauldronsplus.client;
 
-import gay.mountainspring.aquifer.util.ColorSupplier;
 import gay.mountainspring.cauldronsplus.block.CauldronsBlocks;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.util.DyeColor;
 
 public class CauldronsClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		BlockRenderLayerMap renderLayerMap = BlockRenderLayerMap.INSTANCE;
+		
+		renderLayerMap.putBlocks(RenderLayer.getTranslucent(),
+				CauldronsBlocks.HONEY_CAULDRON,
+				CauldronsBlocks.SLIME_CAULDRON);
+		
 		var blockColorRegistry = ColorProviderRegistry.BLOCK;
 		
-		blockColorRegistry.register((state, world, pos, tintIndex) -> {
-			if (world != null && pos != null) {
-				if (world.getBlockEntity(pos) instanceof ColorSupplier entity) {
-					return ColorHelper.Argb.fullAlpha(entity.getColor());
-				}
-			}
-			
-			return -1;
-		},
+		blockColorRegistry.register((state, world, pos, tintIndex) -> world != null && pos != null && world.getBlockEntityRenderData(pos) instanceof Integer i ? i : -1,
 		CauldronsBlocks.DYED_WATER_CAULDRON,
 		CauldronsBlocks.POTION_CAULDRON);
+		
+		blockColorRegistry.register((state, world, pos, tintIndex) -> DyeColor.WHITE.getEntityColor(), CauldronsBlocks.MILK_CAULDRON);
 	}
 }

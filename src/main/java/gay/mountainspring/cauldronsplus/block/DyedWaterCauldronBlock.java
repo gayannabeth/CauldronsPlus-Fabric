@@ -2,12 +2,11 @@ package gay.mountainspring.cauldronsplus.block;
 
 import com.mojang.serialization.MapCodec;
 
-import gay.mountainspring.aquifer.block.AquiferLeveledCauldronBlock;
+import gay.mountainspring.aquifer.block.AquiferThreeLeveledCauldronBlock;
 import gay.mountainspring.aquifer.block.cauldron.CauldronContentsType;
 import gay.mountainspring.aquifer.block.cauldron.CauldronGroup;
 import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusBehavior;
 import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusContentsTypes;
-import gay.mountainspring.cauldronsplus.block.entity.CauldronBlockEntityTypes;
 import gay.mountainspring.cauldronsplus.block.entity.DyedWaterCauldronBlockEntity;
 import net.minecraft.block.AbstractCauldronBlock;
 import net.minecraft.block.Block;
@@ -19,11 +18,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
-public class DyedWaterCauldronBlock extends AquiferLeveledCauldronBlock implements BlockEntityProvider {
+public class DyedWaterCauldronBlock extends AquiferThreeLeveledCauldronBlock implements BlockEntityProvider {
 	public static final MapCodec<DyedWaterCauldronBlock> CODEC = createCodec(DyedWaterCauldronBlock::new);
 	
 	@Override
-	protected MapCodec<? extends AquiferLeveledCauldronBlock> getCodec() {
+	protected MapCodec<DyedWaterCauldronBlock> getCodec() {
 		return CODEC;
 	}
 	
@@ -52,10 +51,15 @@ public class DyedWaterCauldronBlock extends AquiferLeveledCauldronBlock implemen
 		if (state.getBlock() instanceof AbstractCauldronBlock cauldron) {
 			if (cauldron.aquifer$getContentsType() == CauldronContentsType.WATER) {
 				world.setBlockState(pos, cauldron.aquifer$getGroup().get(CauldronsPlusContentsTypes.DYED_WATER).getStateWithProperties(state), Block.NOTIFY_ALL_AND_REDRAW);
-				world.getBlockEntity(pos, CauldronBlockEntityTypes.DYED_WATER_CAULDRON).get().setColor(dye.getColor().getEntityColor());
+				DyedWaterCauldronBlockEntity entity = ((DyedWaterCauldronBlockEntity) world.getBlockEntity(pos));
+				entity.setColor(dye.getColor().getEntityColor());
+				entity.markDirty();
+				world.updateListeners(pos, state, state, Block.REDRAW_ON_MAIN_THREAD);
 				return true;
-			} else if (cauldron.aquifer$getContentsType() == CauldronsPlusContentsTypes.DYED_WATER) {
-				world.getBlockEntity(pos, CauldronBlockEntityTypes.DYED_WATER_CAULDRON).get().applyDye(dye);
+			} else if (cauldron.aquifer$getContentsType() == CauldronsPlusContentsTypes.DYED_WATER && world.getBlockEntity(pos) instanceof DyedWaterCauldronBlockEntity entity) {
+				entity.applyDye(dye);
+				entity.markDirty();
+				world.updateListeners(pos, state, state, Block.REDRAW_ON_MAIN_THREAD);
 				return true;
 			}
 		}

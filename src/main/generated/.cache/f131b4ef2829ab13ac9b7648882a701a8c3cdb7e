@@ -1,1 +1,6 @@
-// 1.21.1	2026-01-07T17:11:24.4708572	Cauldrons+/Block Loot Tables
+// 1.21.1	2026-02-05T08:16:22.5920429	Cauldrons+/Block Loot Tables
+011dfd7055c822da7f6d11fa7ceab13ce8b0761a data\cauldronsplus\loot_table\blocks\honey_cauldron.json
+548d115eeb79b74d3fbe03951bdc179110ed6f8a data\cauldronsplus\loot_table\blocks\milk_cauldron.json
+548d115eeb79b74d3fbe03951bdc179110ed6f8a data\cauldronsplus\loot_table\blocks\potion_cauldron.json
+548d115eeb79b74d3fbe03951bdc179110ed6f8a data\cauldronsplus\loot_table\blocks\dyed_water_cauldron.json
+58d447c5a1159594a92e1279488b13e310269c51 data\cauldronsplus\loot_table\blocks\slime_cauldron.json

@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -12,6 +14,7 @@ import gay.mountainspring.aquifer.util.ColorSupplier;
 import gay.mountainspring.cauldronsplus.Cauldrons;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap.Builder;
@@ -93,6 +96,9 @@ public class PotionCauldronBlockEntity extends BlockEntity implements ColorSuppl
 				}
 			}
 		}
+		if (this.world != null) {
+			this.world.updateListeners(pos, this.getCachedState(), this.getCachedState(), Block.REDRAW_ON_MAIN_THREAD);
+		}
 	}
 	
 	@Override
@@ -152,6 +158,7 @@ public class PotionCauldronBlockEntity extends BlockEntity implements ColorSuppl
 		}
 		if (hasEffectedEntity) {
 			this.recentlyAffectedEntities.put(entity.getUuid(), world.getTime() + 400L);
+			this.markDirty();
 		}
 		return hasEffectedEntity;
 	}
@@ -165,12 +172,19 @@ public class PotionCauldronBlockEntity extends BlockEntity implements ColorSuppl
 						toRemove.add(entry.getKey());
 					}
 				}
+				if (toRemove.size() > 0) blockEntity.markDirty();
 				for (UUID uuid : toRemove) {
 					blockEntity.recentlyAffectedEntities.removeLong(uuid);
 				}
 			} else {
 				blockEntity.recentlyAffectedEntities.clear();
+				blockEntity.markDirty();
 			}
 		}
+	}
+	
+	@Override
+	public @Nullable Object getRenderData() {
+		return this.getColor();
 	}
 }

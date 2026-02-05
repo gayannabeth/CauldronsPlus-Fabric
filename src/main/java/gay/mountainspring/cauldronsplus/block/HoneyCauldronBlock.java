@@ -9,9 +9,11 @@ import gay.mountainspring.cauldronsplus.block.cauldron.CauldronsPlusContentsType
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
@@ -27,10 +29,14 @@ import net.minecraft.world.event.GameEvent;
 public class HoneyCauldronBlock extends FourLeveledCauldronBlock {
 	public static final MapCodec<HoneyCauldronBlock> CODEC = createCodec(HoneyCauldronBlock::new);
 	
-	public static final VoxelShape SHAPE_1 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 7.25D, 14.0D));
-	public static final VoxelShape SHAPE_2 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 9.5D, 14.0D));
-	public static final VoxelShape SHAPE_3 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 11.75D, 14.0D));
-	public static final VoxelShape SHAPE_4 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 14.0D, 14.0D));
+	public static final VoxelShape COLLISION_SHAPE_1 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 7.25D, 14.0D));
+	public static final VoxelShape COLLISION_SHAPE_2 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 9.5D, 14.0D));
+	public static final VoxelShape COLLISION_SHAPE_3 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 11.75D, 14.0D));
+	public static final VoxelShape COLLISION_SHAPE_4 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 14.0D, 14.0D));
+	public static final VoxelShape SHAPE_1 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 9.25D, 14.0D));
+	public static final VoxelShape SHAPE_2 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 11.5D, 14.0D));
+	public static final VoxelShape SHAPE_3 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 13.75D, 14.0D));
+	public static final VoxelShape SHAPE_4 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D));
 	
 	@Override
 	protected MapCodec<HoneyCauldronBlock> getCodec() {
@@ -62,13 +68,31 @@ public class HoneyCauldronBlock extends FourLeveledCauldronBlock {
 	}
 	
 	@Override
-	protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+	protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
 		return switch (state.get(LEVEL)) {
 			case 1 -> SHAPE_1;
 			case 2 -> SHAPE_2;
 			case 3 -> SHAPE_3;
 			case 4 -> SHAPE_4;
+			default -> super.getOutlineShape(state, world, pos, context);
+		};
+	}
+	
+	@Override
+	protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+		return switch (state.get(LEVEL)) {
+			case 1 -> COLLISION_SHAPE_1;
+			case 2 -> COLLISION_SHAPE_2;
+			case 3 -> COLLISION_SHAPE_3;
+			case 4 -> COLLISION_SHAPE_4;
 			default -> super.getCollisionShape(state, world, pos, context);
 		};
+	}
+	
+	@Override
+	public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+		if (entity.handleFallDamage(fallDistance, 0.2f, world.getDamageSources().fall())) {
+			entity.playSound(BlockSoundGroup.HONEY.getFallSound(), BlockSoundGroup.HONEY.getVolume() * 0.5F, BlockSoundGroup.HONEY.getPitch() * 0.75F);
+		}
 	}
 }

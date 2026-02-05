@@ -13,5 +13,7 @@ public class CauldronsDataGen implements DataGeneratorEntrypoint {
 		pack.addProvider(CauldronsBlockStatesModelGen::new);
 		pack.addProvider(CauldronsLangGen::new);
 		pack.addProvider(CauldronsRecipeGen::new);
+		pack.addProvider(CauldronsTagGen.BlockTagGen::new);
+		pack.addProvider(CauldronsTagGen.ItemTagGen::new);
 	}
 }
