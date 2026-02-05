@@ -39,7 +39,7 @@ public class HoneyCauldronBlock extends FourLeveledCauldronBlock {
 	public static final VoxelShape SHAPE_4 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D));
 	
 	@Override
-	protected MapCodec<HoneyCauldronBlock> getCodec() {
+	protected MapCodec<? extends HoneyCauldronBlock> getCodec() {
 		return CODEC;
 	}
 	

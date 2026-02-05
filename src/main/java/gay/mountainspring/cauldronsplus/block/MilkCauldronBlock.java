@@ -11,7 +11,7 @@ public class MilkCauldronBlock extends FourLeveledCauldronBlock {
 	public static final MapCodec<MilkCauldronBlock> CODEC = createCodec(MilkCauldronBlock::new);
 	
 	@Override
-	protected MapCodec<MilkCauldronBlock> getCodec() {
+	protected MapCodec<? extends MilkCauldronBlock> getCodec() {
 		return CODEC;
 	}
 	

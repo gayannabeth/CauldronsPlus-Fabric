@@ -22,7 +22,7 @@ public class DyedWaterCauldronBlock extends AquiferThreeLeveledCauldronBlock imp
 	public static final MapCodec<DyedWaterCauldronBlock> CODEC = createCodec(DyedWaterCauldronBlock::new);
 	
 	@Override
-	protected MapCodec<DyedWaterCauldronBlock> getCodec() {
+	protected MapCodec<? extends DyedWaterCauldronBlock> getCodec() {
 		return CODEC;
 	}
 	

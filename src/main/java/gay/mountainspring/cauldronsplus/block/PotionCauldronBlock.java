@@ -24,7 +24,7 @@ public class PotionCauldronBlock extends TwentyFourLeveledCauldronBlock implemen
 	public static final MapCodec<PotionCauldronBlock> CODEC = createCodec(PotionCauldronBlock::new);
 	
 	@Override
-	protected MapCodec<PotionCauldronBlock> getCodec() {
+	protected MapCodec<? extends PotionCauldronBlock> getCodec() {
 		return CODEC;
 	}
 	

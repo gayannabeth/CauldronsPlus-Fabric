@@ -41,7 +41,7 @@ public class SlimeCauldronBlock extends NineLeveledCauldronBlock {
 	public static final VoxelShape SHAPE_9 = VoxelShapes.union(OUTLINE_SHAPE, Block.createCuboidShape(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D));
 	
 	@Override
-	protected MapCodec<SlimeCauldronBlock> getCodec() {
+	protected MapCodec<? extends SlimeCauldronBlock> getCodec() {
 		return CODEC;
 	}
 	
