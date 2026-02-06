@@ -2,7 +2,7 @@
   "parent": "cauldronsplus:block/template_cauldron4_level2",
   "textures": {
     "bottom": "minecraft:block/cauldron_bottom",
-    "content": "minecraft:block/water_still",
+    "content": "cauldronsplus:block/milk_still",
     "inside": "minecraft:block/cauldron_inner",
     "side": "minecraft:block/cauldron_side",
     "top": "minecraft:block/cauldron_top"

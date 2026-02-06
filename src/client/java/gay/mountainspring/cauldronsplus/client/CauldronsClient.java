@@ -5,7 +5,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.DyeColor;
 
 public class CauldronsClient implements ClientModInitializer {
 	@Override
@@ -21,7 +20,5 @@ public class CauldronsClient implements ClientModInitializer {
 		blockColorRegistry.register((state, world, pos, tintIndex) -> world != null && pos != null && world.getBlockEntityRenderData(pos) instanceof Integer i ? i : -1,
 		CauldronsBlocks.DYED_WATER_CAULDRON,
 		CauldronsBlocks.POTION_CAULDRON);
-		
-		blockColorRegistry.register((state, world, pos, tintIndex) -> DyeColor.WHITE.getEntityColor(), CauldronsBlocks.MILK_CAULDRON);
 	}
 }
