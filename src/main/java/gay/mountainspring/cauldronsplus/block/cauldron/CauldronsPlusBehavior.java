@@ -52,7 +52,7 @@ public class CauldronsPlusBehavior {
 	public static final CauldronBehavior.CauldronBehaviorMap HONEY_CAULDRON_BEHAVIOR = CauldronBehavior.createMap(Cauldrons.MOD_ID + ":honey");
 	public static final CauldronBehavior.CauldronBehaviorMap SLIME_CAULDRON_BEHAVIOR = CauldronBehavior.createMap(Cauldrons.MOD_ID + ":slime");
 	
-	public static final CauldronBehavior FILL_WITH_MILK = (state, world, pos, player, hand, stack) -> fillCauldron(state, world, pos, player, hand, stack, group -> group.get(CauldronsPlusContentsTypes.MILK).getDefaultState().with(CauldronsBlocks.LEVEL_4, 4), SoundEvents.ITEM_BUCKET_FILL);
+	public static final CauldronBehavior FILL_WITH_MILK = (state, world, pos, player, hand, stack) -> fillCauldron(state, world, pos, player, hand, stack, group -> group.get(CauldronsPlusContentsTypes.MILK).getDefaultState().with(CauldronsBlocks.LEVEL_4, 4), SoundEvents.ITEM_BUCKET_EMPTY);
 	
 	public static final CauldronBehavior FILL_WITH_HONEY = (state, world, pos, player, hand, stack) -> fillCauldron(state, world, pos, player, hand, stack, group -> group.get(CauldronsPlusContentsTypes.HONEY).getDefaultState().with(CauldronsBlocks.LEVEL_4, 4), SoundEvents.BLOCK_HONEY_BLOCK_PLACE);
 	
@@ -62,11 +62,11 @@ public class CauldronsPlusBehavior {
 	
 	public static final CauldronBehavior FILL_WITH_SLIME_BLOCK = (state, world, pos, player, hand, stack) -> fillCauldronWithBlock(state, world, pos, player, hand, stack, CauldronsPlusContentsTypes.SLIME, NineLeveledCauldronBlock.LEVEL, 9, SoundEvents.BLOCK_SLIME_BLOCK_PLACE);
 	
-	public static final CauldronBehavior EMPTY_MILK = (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(Items.MILK_BUCKET), cauldronState -> cauldronState.get(CauldronsBlocks.LEVEL_4) == 4, group -> group.getEmpty().getDefaultState(), SoundEvents.ITEM_BUCKET_EMPTY);
+	public static final CauldronBehavior EMPTY_MILK = (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(Items.MILK_BUCKET), cauldronState -> cauldronState.get(CauldronsBlocks.LEVEL_4) == 4, group -> group.getEmpty().getDefaultState(), SoundEvents.ITEM_BUCKET_FILL);
 	
-	public static final CauldronBehavior EMPTY_HONEY = (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(CauldronsItems.HONEY_BUCKET), cauldronState -> cauldronState.get(CauldronsBlocks.LEVEL_4) == 4, group -> group.getEmpty().getDefaultState(), SoundEvents.ITEM_BUCKET_EMPTY);
+	public static final CauldronBehavior EMPTY_HONEY = (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(CauldronsItems.HONEY_BUCKET), cauldronState -> cauldronState.get(CauldronsBlocks.LEVEL_4) == 4, group -> group.getEmpty().getDefaultState(), SoundEvents.BLOCK_HONEY_BLOCK_BREAK);
 	
-	public static final CauldronBehavior EMPTY_SLIME = (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(CauldronsItems.SLIME_BUCKET), cauldronState -> cauldronState.get(CauldronsBlocks.LEVEL_9) == 9, group -> group.getEmpty().getDefaultState(), SoundEvents.ITEM_BUCKET_EMPTY);
+	public static final CauldronBehavior EMPTY_SLIME = (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(CauldronsItems.SLIME_BUCKET), cauldronState -> cauldronState.get(CauldronsBlocks.LEVEL_9) == 9, group -> group.getEmpty().getDefaultState(), SoundEvents.BLOCK_SLIME_BLOCK_BREAK);
 	
 	public static final CauldronBehavior FILL_EMPTY_WITH_MILK_FROM_BOTTLE = (state, world, pos, player, hand, stack) -> fillEmptyCauldronFromBottle(state, world, pos, player, hand, stack, CauldronsPlusContentsTypes.MILK, SoundEvents.ITEM_BOTTLE_EMPTY);
 	
@@ -116,7 +116,7 @@ public class CauldronsPlusBehavior {
 	
 	public static final CauldronBehavior EMPTY_MILK_WITH_BOTTLE = (state, world, pos, player, hand, stack) -> emptyCauldronWithBottle(state, world, pos, player, hand, stack, new ItemStack(CauldronsItems.MILK_BOTTLE), SoundEvents.ITEM_BOTTLE_FILL);
 	
-	public static final CauldronBehavior EMPTY_HONEY_WITH_BOTTLE = (state, world, pos, player, hand, stack) -> emptyCauldronWithBottle(state, world, pos, player, hand, stack, new ItemStack(Items.HONEY_BOTTLE), SoundEvents.ITEM_BOTTLE_FILL);
+	public static final CauldronBehavior EMPTY_HONEY_WITH_BOTTLE = (state, world, pos, player, hand, stack) -> emptyCauldronWithBottle(state, world, pos, player, hand, stack, new ItemStack(Items.HONEY_BOTTLE), SoundEvents.BLOCK_HONEY_BLOCK_BREAK);
 	
 	public static final CauldronBehavior DYE_WATER = (state, world, pos, player, hand, stack) -> {
 		if (state.getBlock() instanceof AbstractCauldronBlock cauldron && (cauldron.aquifer$getContentsType() == CauldronContentsType.WATER || cauldron.aquifer$getContentsType() == CauldronsPlusContentsTypes.DYED_WATER) && stack.getItem() instanceof DyeItem dye) {
@@ -126,6 +126,8 @@ public class CauldronsPlusBehavior {
 				} else {
 					player.incrementStat(Stats.USED.getOrCreateStat(dye));
 					stack.decrementUnlessCreative(1, player);
+					world.playSound(null, pos, SoundEvents.ITEM_DYE_USE, SoundCategory.BLOCKS);
+					world.emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
 				}
 			} else {
 				return ItemActionResult.success(world.isClient);
@@ -145,7 +147,9 @@ public class CauldronsPlusBehavior {
 						player.incrementStat(CauldronsPlusStats.DYED_ITEM_WITH_CAULDRON);
 						if (cauldron instanceof AquiferLeveledCauldronExtensions cauldron2) {
 							cauldron2.aquifer$decrementFluidLevel(state, world, pos);
+							world.emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
 						}
+						world.playSound(null, pos, SoundEvents.ITEM_DYE_USE, SoundCategory.BLOCKS);
 					} else {
 						return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 					}
